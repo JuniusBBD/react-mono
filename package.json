@@ -1,0 +1,14 @@
+{
+  "name": "my-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm run --filter app dev",
+    "build": "pnpm run --filter app build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

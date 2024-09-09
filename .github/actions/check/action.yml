@@ -1,0 +1,48 @@
+name: Deploy if Required
+description: Checks remote version against repo version and deploys if required.
+
+inputs:
+  aws-role-to-assume:
+    description: ARN of role to assume to push to S3
+    required: true
+
+  aws-region:
+    description: Region of bucket
+    required: true
+
+  aws-bucket:
+    description: Path of S3 bucket, without S3 protocol prefix
+    required: true
+
+  distribution-id:
+    description: Fully qualified key in deployment.yaml file referencing a version. Must begin with a period
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - uses: actions/checkout@v3
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 9.9.0
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+    - name: Installing dependencies
+      run: pnpm install
+      shell: bash
+    - name: Building project
+      run: pnpm run build
+      shell: bash
+    - name: CloudFront Cache Invalidation
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        aws-region: ${{ inputs.aws-region }}
+    - name: Deploy to S3 and cache invalidation
+      shell: bash
+      run: |
+        aws s3 sync ./app/dist ${{ inputs.aws-bucket }}
+        aws cloudfront create-invalidation --distribution-id ${{ inputs.distribution-id }} --paths "/*"

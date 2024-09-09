@@ -1,0 +1,23 @@
+on:
+  push:
+    branches: mono
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  dev:
+    name: Deploy to Dev
+    # environment: dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check and Deploy
+        uses: ./.github/actions/check
+        with:
+          aws-role-to-assume: ${{ secrets.AWS_EXECUTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-bucket: ${{ secrets.AWS_S3_BUCKET }}
+          distribution-id: ${{ secrets.DISTRIBUTION }}
