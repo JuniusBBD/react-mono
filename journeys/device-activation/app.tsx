@@ -1,3 +1,3 @@
 export default function DeviceActivationApp() {
-  return <div>Hello Device Activation</div>
+  return <div>Hello, Device Activation</div>
 }
