@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feature-flag-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feature-flag
+  template:
+    metadata:
+      labels:
+        app: feature-flag
+    spec:
+      serviceAccountName: default
+      containers:
+      - name: my-container
+        image: julekgwa/feature-aws-flag:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
